@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#f4b93f" />
+  <title>ESL Walkie-Talkie</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="brand">
+      <div class="radio-mark" aria-hidden="true">📻</div>
+      <div>
+        <h1>ESL Walkie-Talkie</h1>
+        <p>Pair two devices. Hold to talk.</p>
+      </div>
+    </header>
+
+    <section id="homeView" class="card view">
+      <div class="status-pill local-only">GitHub-only • no account • no recording</div>
+      <label class="field-label" for="nameInput">Your name</label>
+      <input id="nameInput" class="text-input" maxlength="20" autocomplete="nickname" placeholder="e.g. Yuki" />
+
+      <div class="stack">
+        <button id="createBtn" class="btn btn-primary">Create a radio</button>
+        <button id="scanOfferBtn" class="btn btn-secondary">Scan partner QR</button>
+        <button id="pasteOfferBtn" class="btn btn-ghost">Paste backup code</button>
+      </div>
+
+      <div class="info-box">
+        <strong>Best setup:</strong> open this page on both devices first, then pair with the in-app QR scanner. Both devices should be on the same Wi-Fi.
+      </div>
+    </section>
+
+    <section id="incomingView" class="card view hidden">
+      <div class="eyebrow">Incoming radio</div>
+      <h2><span id="incomingName">Your partner</span> wants to connect</h2>
+      <p class="muted">Enter your name, allow microphone access, then make an answer QR.</p>
+      <label class="field-label" for="joinNameInput">Your name</label>
+      <input id="joinNameInput" class="text-input" maxlength="20" autocomplete="nickname" placeholder="e.g. Haruto" />
+      <div class="stack">
+        <button id="acceptOfferBtn" class="btn btn-primary">Join radio</button>
+        <button id="incomingBackBtn" class="btn btn-ghost">Cancel</button>
+      </div>
+    </section>
+
+    <section id="pairView" class="card view hidden">
+      <div class="pair-header">
+        <div>
+          <div id="pairEyebrow" class="eyebrow">Pairing</div>
+          <h2 id="pairTitle">Show this QR to your partner</h2>
+        </div>
+        <div id="pairStatus" class="dot-status"><span></span> Waiting</div>
+      </div>
+
+      <div id="qrWrap" class="qr-wrap">
+        <canvas id="qrCanvas" width="360" height="360" aria-label="Pairing QR code"></canvas>
+      </div>
+      <p id="qrHint" class="center muted">Keep this page open while your partner scans the code.</p>
+
+      <details class="manual-box">
+        <summary>Backup copy/paste code</summary>
+        <textarea id="pairCode" class="code-box" readonly></textarea>
+        <button id="copyCodeBtn" class="btn btn-small">Copy code</button>
+      </details>
+
+      <div id="creatorActions" class="stack hidden">
+        <button id="scanAnswerBtn" class="btn btn-primary">Scan answer QR</button>
+        <button id="pasteAnswerBtn" class="btn btn-ghost">Paste answer backup</button>
+      </div>
+
+      <div id="joinerActions" class="stack hidden">
+        <p class="step-note"><strong>Final step:</strong> your partner should scan this answer QR using the walkie-talkie page they already have open.</p>
+      </div>
+
+      <button id="resetPairBtn" class="text-button">Start over</button>
+    </section>
+
+    <section id="radioView" class="card view hidden">
+      <div class="radio-topline">
+        <div>
+          <div class="eyebrow">Connected to</div>
+          <h2 id="partnerName">Partner</h2>
+        </div>
+        <div id="connectionBadge" class="connection-badge">Connecting…</div>
+      </div>
+
+      <div id="remoteTalk" class="remote-talk hidden">
+        <div class="signal-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <span><strong id="remoteTalkName">Partner</strong> is talking…</span>
+      </div>
+
+      <button id="pttBtn" class="ptt" disabled aria-label="Hold to talk">
+        <span class="ptt-icon">🎙️</span>
+        <span class="ptt-main">HOLD TO TALK</span>
+        <span class="ptt-sub">press and hold</span>
+      </button>
+
+      <div id="radioMessage" class="radio-message">Finishing connection…</div>
+
+      <div class="tips-row">
+        <span>🎧 Headphones help prevent feedback.</span>
+        <span>📶 Same Wi-Fi works best.</span>
+      </div>
+
+      <button id="disconnectBtn" class="btn btn-danger">Disconnect</button>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="modalTitle">Scan QR</h2>
+        <button id="closeModalBtn" class="icon-button" aria-label="Close">×</button>
+      </div>
+      <div id="scannerPanel" class="hidden">
+        <div class="video-frame">
+          <video id="scannerVideo" playsinline muted></video>
+          <div class="scan-box"></div>
+        </div>
+        <p id="scannerMessage" class="center muted">Point the camera at the QR code.</p>
+      </div>
+      <div id="pastePanel" class="hidden">
+        <label class="field-label" for="manualCodeInput">Backup code</label>
+        <textarea id="manualCodeInput" class="code-box" placeholder="Paste the backup code here"></textarea>
+        <button id="applyManualBtn" class="btn btn-primary">Use code</button>
+      </div>
+      <div id="modalError" class="error-box hidden"></div>
+    </div>
+  </div>
+
+  <audio id="remoteAudio" autoplay playsinline></audio>
+  <script src="vendor/qrcode-local.js"></script>
+  <script src="vendor/pako.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
